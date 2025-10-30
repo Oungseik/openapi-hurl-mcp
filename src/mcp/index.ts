@@ -101,9 +101,12 @@ server.addTool({
 
 server.addTool({
 	name: "openapi_hurl:security:list",
-	description: "Get all security schemes and definitions from the specified OpenAPI spec",
+	description:
+		"Get all security schemes and definitions from the specified OpenAPI spec",
 	parameters: z.object({
-		specs_name: z.string().describe("Name of the API spec to get security information from"),
+		specs_name: z
+			.string()
+			.describe("Name of the API spec to get security information from"),
 	}),
 	execute: async ({ specs_name }) => {
 		const api = ApiStore.get(specs_name);
@@ -116,22 +119,22 @@ server.addTool({
 		}
 
 		const result: Record<string, unknown> = {};
-		
+
 		// Add top-level security requirements
 		if (api.schema?.security) {
 			result.security = api.schema.security;
 		}
-		
+
 		// Add security schemes from components
 		if (api.schema?.components?.securitySchemes) {
 			result.securitySchemes = api.schema.components.securitySchemes;
 		}
-		
+
 		// For older OpenAPI/Swagger versions, also check securityDefinitions
 		if (api.schema?.securityDefinitions) {
 			result.securityDefinitions = api.schema.securityDefinitions;
 		}
-		
+
 		if (Object.keys(result).length === 0) {
 			return {
 				text: `No security information found in spec: ${specs_name}`,
@@ -148,10 +151,15 @@ server.addTool({
 
 server.addTool({
 	name: "openapi_hurl:security:get",
-	description: "Get the details of a specific security scheme from the specified OpenAPI spec",
+	description:
+		"Get the details of a specific security scheme from the specified OpenAPI spec",
 	parameters: z.object({
-		specs_name: z.string().describe("Name of the API spec to get security scheme from"),
-		security_name: z.string().describe("Name of the security scheme to retrieve"),
+		specs_name: z
+			.string()
+			.describe("Name of the API spec to get security scheme from"),
+		security_name: z
+			.string()
+			.describe("Name of the security scheme to retrieve"),
 	}),
 	execute: async ({ specs_name, security_name }) => {
 		const api = ApiStore.get(specs_name);
@@ -166,21 +174,89 @@ server.addTool({
 		// Check in components.securitySchemes first (OpenAPI 3.x)
 		if (api.schema?.components?.securitySchemes?.[security_name]) {
 			return {
-				text: JSON.stringify(api.schema.components.securitySchemes[security_name], null, 2),
+				text: JSON.stringify(
+					api.schema.components.securitySchemes[security_name],
+					null,
+					2,
+				),
 				type: "text",
 			};
 		}
-		
+
 		// Then check in securityDefinitions (for OpenAPI 2.0/Swagger)
 		if (api.schema?.securityDefinitions?.[security_name]) {
 			return {
-				text: JSON.stringify(api.schema.securityDefinitions[security_name], null, 2),
+				text: JSON.stringify(
+					api.schema.securityDefinitions[security_name],
+					null,
+					2,
+				),
 				type: "text",
 			};
 		}
 
 		return {
 			text: `No security scheme found with name: ${security_name} in spec: ${specs_name}`,
+			type: "text",
+		};
+	},
+});
+
+server.addTool({
+	name: "openapi_hurl:routes:list",
+	description:
+		"List all available routes with their HTTP methods from the specified OpenAPI spec",
+	parameters: z.object({
+		specs_name: z.string().describe("Name of the API spec to get routes from"),
+	}),
+	execute: async ({ specs_name }) => {
+		const api = ApiStore.get(specs_name);
+
+		if (!api) {
+			return {
+				text: `No API spec found with name: ${specs_name}`,
+				type: "text",
+			};
+		}
+
+		const paths = api.schema?.paths;
+		if (!paths) {
+			return {
+				text: `No paths found in spec: ${specs_name}`,
+				type: "text",
+			};
+		}
+
+		const httpMethods = [
+			"get",
+			"put",
+			"post",
+			"delete",
+			"options",
+			"head",
+			"patch",
+			"trace",
+		] as const;
+
+		const routes: string[] = [];
+		for (const [path, pathItem] of Object.entries(paths)) {
+			if (pathItem) {
+				const methods = [];
+
+				for (const method of httpMethods) {
+					if (pathItem[method]) {
+						methods.push(method.toUpperCase());
+					}
+				}
+
+				if (methods.length > 0) {
+					routes.push(...methods.map((method) => `${method} ${path}`));
+				}
+			}
+		}
+
+		return {
+			text: JSON.stringify(routes, null, 2),
 			type: "text",
 		};
 	},
