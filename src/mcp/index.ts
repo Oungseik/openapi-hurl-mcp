@@ -29,3 +29,15 @@ server.addTool({
 		return { text: "Successfully loaded the API schema", type: "text" };
 	},
 });
+
+server.addTool({
+	name: "openapi_hurl:schema:list",
+	description: "List the schemas loaded in the store and ready to inspect",
+	execute: async () => {
+		return {
+			text: JSON.stringify([...ApiStore.keys()]),
+			name: "named of the loaded api schemas",
+			type: "text",
+		};
+	},
+});
