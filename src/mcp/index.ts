@@ -9,8 +9,8 @@ export const server = new FastMCP({
 });
 
 server.addTool({
-	name: "openapi_hurl:schema:add",
-	description: "Load openapi schema from JSON or YAML.",
+	name: "openapi_hurl:specifications:add",
+	description: "Load OpenAPI specifications from JSON or YAML.",
 	parameters: z.object({
 		source: z.string().describe("Path or URL of the file"),
 		name: z
@@ -31,12 +31,36 @@ server.addTool({
 });
 
 server.addTool({
-	name: "openapi_hurl:schema:list",
-	description: "List the schemas loaded in the store and ready to inspect",
+	name: "openapi_hurl:specifications:list",
+	description:
+		"List the specifications loaded in the store and ready to inspect",
 	execute: async () => {
 		return {
 			text: JSON.stringify([...ApiStore.keys()]),
-			name: "named of the loaded api schemas",
+			type: "text",
+		};
+	},
+});
+
+server.addTool({
+	name: "openapi_hurl:schemas:list",
+	description: "Get all schemas names from the specified OpenAPI spec",
+	parameters: z.object({
+		specs_name: z.string().describe("Name of the API spec to get schemas from"),
+	}),
+	execute: async ({ specs_name }) => {
+		const api = ApiStore.get(specs_name);
+
+		if (!api) {
+			return {
+				text: `No API spec found with name: ${specs_name}`,
+				type: "text",
+			};
+		}
+
+		const schemas: Record<string, unknown> = api.schema?.components.schemas;
+		return {
+			text: JSON.stringify(Object.keys(schemas)),
 			type: "text",
 		};
 	},
