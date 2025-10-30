@@ -1,8 +1,7 @@
 import * as fsAsync from "node:fs/promises";
 import * as path from "node:path";
 import * as process from "node:process";
-import { parse as _parse, dereference, validate } from "@readme/openapi-parser";
-import { err, ok } from "./error";
+import { dereference, validate } from "@scalar/openapi-parser";
 
 export function loadSource(url: string): Promise<string> {
 	return url.startsWith("http://") || url.startsWith("https://")
@@ -28,9 +27,10 @@ export async function parse(spec: { source: string; data: string }) {
 	const validateResult = await validate(spec.data);
 
 	if (!validateResult.valid) {
-		return err(validateResult.errors);
+		return validateResult.errors;
 	}
 
-	const api = await _parse(spec.data).then(dereference);
-	return ok(api);
+	return dereference(spec.data);
 }
+
+export type DereferenceResult = Awaited<ReturnType<typeof dereference>>;
