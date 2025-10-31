@@ -1,7 +1,12 @@
 import { FastMCP } from "fastmcp";
 import z from "zod";
-import { loadSource, parse } from "../openapi/loader";
-import { ApiStore } from "../openapi/store";
+import { addSpecsHandler } from "./handlers/add_specs";
+import { listSchemasHandler } from "./handlers/list_all_schemas";
+import { listRoutesHandler } from "./handlers/list_routes";
+import { listSecuritySchemasHandler } from "./handlers/list_security_schemas";
+import { listSpecs } from "./handlers/list_specs";
+import { retrieveSchemaHandler } from "./handlers/retrieve_schema";
+import { retrieveSecuritySchema } from "./handlers/retrieve_security_schema";
 
 export const server = new FastMCP({
 	name: "My Server",
@@ -17,29 +22,14 @@ server.addTool({
 			.string()
 			.describe("Unique name of the api schema to store in the API hash map"),
 	}),
-	execute: async ({ name, source }) => {
-		const data = await loadSource(source);
-		const api = await parse({ data, source: source });
-
-		if (!api || Array.isArray(api)) {
-			return { text: `Invalid OpenAPI Schema from ${source}`, type: "text" };
-		}
-
-		ApiStore.set(name, api);
-		return { text: "Successfully loaded the API schema", type: "text" };
-	},
+	execute: addSpecsHandler,
 });
 
 server.addTool({
 	name: "openapi_hurl:specifications:list",
 	description:
 		"List the specifications loaded in the store and ready to inspect",
-	execute: async () => {
-		return {
-			text: JSON.stringify([...ApiStore.keys()]),
-			type: "text",
-		};
-	},
+	execute: listSpecs,
 });
 
 server.addTool({
@@ -48,55 +38,18 @@ server.addTool({
 	parameters: z.object({
 		specs_name: z.string().describe("Name of the API spec to get schemas from"),
 	}),
-	execute: async ({ specs_name }) => {
-		const api = ApiStore.get(specs_name);
-
-		if (!api) {
-			return {
-				text: `No API spec found with name: ${specs_name}`,
-				type: "text",
-			};
-		}
-
-		const schemas: Record<string, unknown> = api.schema?.components.schemas;
-		return {
-			text: JSON.stringify(Object.keys(schemas)),
-			type: "text",
-		};
-	},
+	execute: listSchemasHandler,
 });
 
 server.addTool({
-	name: "openapi_hurl:schemas:get",
+	name: "openapi_hurl:schemas:retrieve",
 	description:
-		"Get the details of a specific schema from the specified OpenAPI spec",
+		"Retrieve the details of a specific schema from the specified OpenAPI spec",
 	parameters: z.object({
 		specs_name: z.string().describe("Name of the API spec to get schema from"),
 		schema_name: z.string().describe("Name of the schema to retrieve"),
 	}),
-	execute: async ({ specs_name, schema_name }) => {
-		const api = ApiStore.get(specs_name);
-
-		if (!api) {
-			return {
-				text: `No API spec found with name: ${specs_name}`,
-				type: "text",
-			};
-		}
-
-		const schemas: Record<string, unknown> = api.schema?.components.schemas;
-		if (!schemas || !schemas[schema_name]) {
-			return {
-				text: `No schema found with name: ${schema_name} in spec: ${specs_name}`,
-				type: "text",
-			};
-		}
-
-		return {
-			text: JSON.stringify(schemas[schema_name], null, 2),
-			type: "text",
-		};
-	},
+	execute: retrieveSchemaHandler,
 });
 
 server.addTool({
@@ -108,98 +61,22 @@ server.addTool({
 			.string()
 			.describe("Name of the API spec to get security information from"),
 	}),
-	execute: async ({ specs_name }) => {
-		const api = ApiStore.get(specs_name);
-
-		if (!api) {
-			return {
-				text: `No API spec found with name: ${specs_name}`,
-				type: "text",
-			};
-		}
-
-		const result: Record<string, unknown> = {};
-
-		// Add top-level security requirements
-		if (api.schema?.security) {
-			result.security = api.schema.security;
-		}
-
-		// Add security schemes from components
-		if (api.schema?.components?.securitySchemes) {
-			result.securitySchemes = api.schema.components.securitySchemes;
-		}
-
-		// For older OpenAPI/Swagger versions, also check securityDefinitions
-		if (api.schema?.securityDefinitions) {
-			result.securityDefinitions = api.schema.securityDefinitions;
-		}
-
-		if (Object.keys(result).length === 0) {
-			return {
-				text: `No security information found in spec: ${specs_name}`,
-				type: "text",
-			};
-		}
-
-		return {
-			text: JSON.stringify(result, null, 2),
-			type: "text",
-		};
-	},
+	execute: listSecuritySchemasHandler,
 });
 
 server.addTool({
-	name: "openapi_hurl:security:get",
+	name: "openapi_hurl:security:retrieve",
 	description:
-		"Get the details of a specific security scheme from the specified OpenAPI spec",
+		"Retrieve the details of a specific security scheme from the specified OpenAPI spec",
 	parameters: z.object({
 		specs_name: z
 			.string()
-			.describe("Name of the API spec to get security scheme from"),
+			.describe("Name of the API spec to retrieve security scheme from"),
 		security_name: z
 			.string()
 			.describe("Name of the security scheme to retrieve"),
 	}),
-	execute: async ({ specs_name, security_name }) => {
-		const api = ApiStore.get(specs_name);
-
-		if (!api) {
-			return {
-				text: `No API spec found with name: ${specs_name}`,
-				type: "text",
-			};
-		}
-
-		// Check in components.securitySchemes first (OpenAPI 3.x)
-		if (api.schema?.components?.securitySchemes?.[security_name]) {
-			return {
-				text: JSON.stringify(
-					api.schema.components.securitySchemes[security_name],
-					null,
-					2,
-				),
-				type: "text",
-			};
-		}
-
-		// Then check in securityDefinitions (for OpenAPI 2.0/Swagger)
-		if (api.schema?.securityDefinitions?.[security_name]) {
-			return {
-				text: JSON.stringify(
-					api.schema.securityDefinitions[security_name],
-					null,
-					2,
-				),
-				type: "text",
-			};
-		}
-
-		return {
-			text: `No security scheme found with name: ${security_name} in spec: ${specs_name}`,
-			type: "text",
-		};
-	},
+	execute: retrieveSecuritySchema,
 });
 
 server.addTool({
@@ -207,57 +84,9 @@ server.addTool({
 	description:
 		"List all available routes with their HTTP methods from the specified OpenAPI spec",
 	parameters: z.object({
-		specs_name: z.string().describe("Name of the API spec to get routes from"),
+		specs_name: z
+			.string()
+			.describe("Name of the API spec to get the list of routes from"),
 	}),
-	execute: async ({ specs_name }) => {
-		const api = ApiStore.get(specs_name);
-
-		if (!api) {
-			return {
-				text: `No API spec found with name: ${specs_name}`,
-				type: "text",
-			};
-		}
-
-		const paths = api.schema?.paths;
-		if (!paths) {
-			return {
-				text: `No paths found in spec: ${specs_name}`,
-				type: "text",
-			};
-		}
-
-		const httpMethods = [
-			"get",
-			"put",
-			"post",
-			"delete",
-			"options",
-			"head",
-			"patch",
-			"trace",
-		] as const;
-
-		const routes: string[] = [];
-		for (const [path, pathItem] of Object.entries(paths)) {
-			if (pathItem) {
-				const methods = [];
-
-				for (const method of httpMethods) {
-					if (pathItem[method]) {
-						methods.push(method.toUpperCase());
-					}
-				}
-
-				if (methods.length > 0) {
-					routes.push(...methods.map((method) => `${method} ${path}`));
-				}
-			}
-		}
-
-		return {
-			text: JSON.stringify(routes, null, 2),
-			type: "text",
-		};
-	},
+	execute: listRoutesHandler,
 });
