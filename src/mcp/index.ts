@@ -1,15 +1,15 @@
 import { FastMCP } from "fastmcp";
 import z from "zod";
-import { addSpecsHandler } from "./handlers/add_specs";
-import { listSchemasHandler } from "./handlers/list_all_schemas";
-import { listRoutesHandler } from "./handlers/list_routes";
-import { listSecuritySchemasHandler } from "./handlers/list_security_schemas";
-import { listSpecs } from "./handlers/list_specs";
-import { retrieveRequestSchemaHandler } from "./handlers/retrieve_request_schema";
-import { retrieveResponseSchemaHandler } from "./handlers/retrieve_response_schema";
-import { retrieveRouteHandler } from "./handlers/retrieve_route";
-import { retrieveSchemaHandler } from "./handlers/retrieve_schema";
-import { retrieveSecuritySchema } from "./handlers/retrieve_security_schema";
+import { addSpecsHandler } from "./openapi_handlers/add_specs";
+import { listSchemasHandler } from "./openapi_handlers/list_all_schemas";
+import { listRoutesHandler } from "./openapi_handlers/list_routes";
+import { listSecuritySchemasHandler } from "./openapi_handlers/list_security_schemas";
+import { listSpecs } from "./openapi_handlers/list_specs";
+import { retrieveRequestSchemaHandler } from "./openapi_handlers/retrieve_request_schema";
+import { retrieveResponseSchemaHandler } from "./openapi_handlers/retrieve_response_schema";
+import { retrieveRouteHandler } from "./openapi_handlers/retrieve_route";
+import { retrieveSchemaHandler } from "./openapi_handlers/retrieve_schema";
+import { retrieveSecuritySchema } from "./openapi_handlers/retrieve_security_schema";
 
 export const server = new FastMCP({
 	name: "My Server",
