@@ -5,6 +5,8 @@ import { listSchemasHandler } from "./handlers/list_all_schemas";
 import { listRoutesHandler } from "./handlers/list_routes";
 import { listSecuritySchemasHandler } from "./handlers/list_security_schemas";
 import { listSpecs } from "./handlers/list_specs";
+import { retrieveRequestSchemaHandler } from "./handlers/retrieve_request_schema";
+import { retrieveResponseSchemaHandler } from "./handlers/retrieve_response_schema";
 import { retrieveRouteHandler } from "./handlers/retrieve_route";
 import { retrieveSchemaHandler } from "./handlers/retrieve_schema";
 import { retrieveSecuritySchema } from "./handlers/retrieve_security_schema";
@@ -108,4 +110,45 @@ server.addTool({
 			.describe("HTTP method of the route (GET, POST, PUT, DELETE, etc.)"),
 	}),
 	execute: retrieveRouteHandler,
+});
+
+server.addTool({
+	name: "openapi_hurl:requests:retrieve",
+	description:
+		"Retrieve the request schema for a specific endpoint from an OpenAPI 3.x specification",
+	parameters: z.object({
+		specs_name: z.string().describe("Name of the API spec to retrieve from"),
+		path: z
+			.string()
+			.describe("Path of the endpoint (e.g., /users, /pets/{petId})"),
+		method: z
+			.enum(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"])
+			.describe("HTTP method of the endpoint"),
+	}),
+	execute: retrieveRequestSchemaHandler,
+});
+
+server.addTool({
+	name: "openapi_hurl:responses:retrieve",
+	description:
+		"Retrieve the response schema for a specific endpoint from an OpenAPI 3.x specification",
+	parameters: z.object({
+		specs_name: z.string().describe("Name of the API spec to retrieve from"),
+		path: z
+			.string()
+			.describe("Path of the endpoint (e.g., /users, /pets/{petId})"),
+		method: z
+			.enum([
+				"GET",
+				"POST",
+				"PUT",
+				"PATCH",
+				"DELETE",
+				"HEAD",
+				"OPTIONS",
+				"TRACE",
+			])
+			.describe("HTTP method of the endpoint"),
+	}),
+	execute: retrieveResponseSchemaHandler,
 });

@@ -31,7 +31,6 @@ export const listRoutesHandler = async ({
 		"options",
 		"head",
 		"patch",
-		"trace",
 	] as const;
 
 	const routes: string[] = [];
