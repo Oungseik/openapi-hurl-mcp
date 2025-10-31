@@ -5,6 +5,7 @@ import { listSchemasHandler } from "./handlers/list_all_schemas";
 import { listRoutesHandler } from "./handlers/list_routes";
 import { listSecuritySchemasHandler } from "./handlers/list_security_schemas";
 import { listSpecs } from "./handlers/list_specs";
+import { retrieveRouteHandler } from "./handlers/retrieve_route";
 import { retrieveSchemaHandler } from "./handlers/retrieve_schema";
 import { retrieveSecuritySchema } from "./handlers/retrieve_security_schema";
 
@@ -89,4 +90,22 @@ server.addTool({
 			.describe("Name of the API spec to get the list of routes from"),
 	}),
 	execute: listRoutesHandler,
+});
+
+server.addTool({
+	name: "openapi_hurl:routes:retrieve",
+	description:
+		"Retrieve detailed information about a specific route/endpoint from the specified OpenAPI spec",
+	parameters: z.object({
+		specs_name: z
+			.string()
+			.describe("Name of the API spec to get the route from"),
+		path: z
+			.string()
+			.describe("Path of the route to retrieve (e.g., /users, /pets/{petId})"),
+		method: z
+			.string()
+			.describe("HTTP method of the route (GET, POST, PUT, DELETE, etc.)"),
+	}),
+	execute: retrieveRouteHandler,
 });
