@@ -56,7 +56,7 @@ export const retrieveRouteHandler = async ({
 	}
 
 	// Construct detailed endpoint information
-	const endpointInfo: any = {
+	const endpointInfo = {
 		path: path,
 		method: method.toUpperCase(),
 		summary: operation.summary || undefined,
@@ -70,7 +70,7 @@ export const retrieveRouteHandler = async ({
 	};
 
 	// Clean up undefined values for cleaner output
-	const cleanEndpointInfo: any = {};
+	const cleanEndpointInfo: Record<string, unknown> = {};
 	for (const [key, value] of Object.entries(endpointInfo)) {
 		if (value !== undefined) {
 			cleanEndpointInfo[key] = value;
