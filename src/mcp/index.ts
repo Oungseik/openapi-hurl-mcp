@@ -1,5 +1,6 @@
 import { FastMCP } from "fastmcp";
 import z from "zod";
+import { retrieveDocsHandler } from "./hurl_handlers/retrieve_docs";
 import { addSpecsHandler } from "./openapi_handlers/add_specs";
 import { listSchemasHandler } from "./openapi_handlers/list_all_schemas";
 import { listRoutesHandler } from "./openapi_handlers/list_routes";
@@ -151,4 +152,25 @@ server.addTool({
 			.describe("HTTP method of the endpoint"),
 	}),
 	execute: retrieveResponseSchemaHandler,
+});
+
+server.addTool({
+	name: "openapi_hurl:hurl_document:retrieve",
+	description:
+		"Retrieve the document of hurl. Title of the documents are 'hurl_file', 'entry', 'request', 'response', 'capturing_response', 'asserting_response', 'filters', 'grammar'",
+	parameters: z.object({
+		document_title: z
+			.enum([
+				"hurl_file",
+				"entry",
+				"request",
+				"response",
+				"capturing_response",
+				"asserting_response",
+				"filters",
+				"grammar",
+			])
+			.describe("The title of the sections in the HURL documentation."),
+	}),
+	execute: retrieveDocsHandler,
 });
