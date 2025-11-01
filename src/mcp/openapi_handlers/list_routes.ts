@@ -33,19 +33,26 @@ export const listRoutesHandler = async ({
 		"patch",
 	] as const;
 
-	const routes: string[] = [];
+	const routes: { http: string; description?: string; summary?: string }[] = [];
 	for (const [path, pathItem] of Object.entries(paths)) {
 		if (pathItem) {
-			const methods = [];
+			const methods: string[] = [];
 
 			for (const method of httpMethods) {
 				if (pathItem[method]) {
-					methods.push(method.toUpperCase());
+					methods.push(method);
 				}
 			}
 
+			const temp: { http: string; description?: string; summary?: string }[] =
+				methods.map((method) => ({
+					http: `${method.toLocaleUpperCase()} ${path}`,
+					description: pathItem[method]?.["description"],
+					summary: pathItem[method]?.["summary"],
+				}));
+
 			if (methods.length > 0) {
-				routes.push(...methods.map((method) => `${method} ${path}`));
+				routes.push(...temp);
 			}
 		}
 	}
