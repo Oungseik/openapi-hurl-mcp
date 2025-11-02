@@ -60,6 +60,7 @@ To use directly with bun without compilation.
 }
 ```
 
+For better testing experience, you can use [hurl-test-planner](./hurl-test-planner.md) custom agent or you can tweak it on your own.
 
 Or build with `bun run build`, and use the output from `build/index.js`. Default target is `bun`. You can change it to `node` by manually edit the [package.json](./package.json).
 The server runs over stdio by default. You can connect it to any MCP-compatible client.
