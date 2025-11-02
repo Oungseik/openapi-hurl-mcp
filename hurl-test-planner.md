@@ -34,19 +34,16 @@ For each endpoint to test:
 - Use `openapi_hurl:responses:retrieve` to understand response schemas
 - Use `openapi_hurl:schemas:retrieve` for complex object definitions
 - Use `openapi_hurl:security:retrieve` for authentication details
-- Confirm the possible enum values. For example the `product-type` can be enum value and if it is not enum in the schema confirm the user about the possible values.
 
 ### 4. Test Writing Phase
 When writing Hurl tests:
 - Reference `openapi_hurl:hurl_document:retrieve` with appropriate titles:
-  - 'hurl_file' - Overall file structure
   - 'entry' - Request/response pairs
   - 'request' - Request syntax
   - 'response' - Response handling
   - 'capturing_response' - Extracting values for later use
   - 'asserting_response' - Writing assertions
   - 'filters' - Data transformation
-  - 'grammar' - Complete syntax reference
 
 ## Test Writing Best Practices
 
