@@ -34,6 +34,7 @@ For each endpoint to test:
 - Use `openapi_hurl:responses:retrieve` to understand response schemas
 - Use `openapi_hurl:schemas:retrieve` for complex object definitions
 - Use `openapi_hurl:security:retrieve` for authentication details
+- Confirm the possible enum values. For example the `product-type` can be enum value and if it is not enum in the schema confirm the user about the possible values.
 
 ### 4. Test Writing Phase
 When writing Hurl tests:
