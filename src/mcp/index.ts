@@ -157,7 +157,7 @@ server.addTool({
 server.addTool({
 	name: "openapi_hurl:hurl_document:retrieve",
 	description:
-		"Retrieve the document of hurl. Title of the documents are 'hurl_file', 'entry', 'request', 'response', 'capturing_response', 'asserting_response', 'filters', 'grammar'",
+		"Retrieve the document of hurl. Title of the documents are 'sample', 'hurl_file', 'entry', 'request', 'response', 'capturing_response', 'asserting_response', 'filters', 'grammar'",
 	parameters: z.object({
 		document_title: z
 			.enum([
