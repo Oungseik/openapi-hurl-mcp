@@ -3,8 +3,6 @@ import type { TextContent } from "fastmcp";
 const doc = {
 	sample:
 		"https://raw.githubusercontent.com/Orange-OpenSource/hurl/refs/heads/master/docs/samples.md",
-	hurl_file:
-		"https://raw.githubusercontent.com/Orange-OpenSource/hurl/refs/heads/master/docs/hurl-file.md",
 	entry:
 		"https://raw.githubusercontent.com/Orange-OpenSource/hurl/refs/heads/master/docs/entry.md",
 	request:
@@ -19,8 +17,6 @@ const doc = {
 		"https://raw.githubusercontent.com/Orange-OpenSource/hurl/refs/heads/master/docs/filters.md",
 	templates:
 		"https://raw.githubusercontent.com/Orange-OpenSource/hurl/refs/heads/master/docs/templates.md",
-	grammar:
-		"https://raw.githubusercontent.com/Orange-OpenSource/hurl/refs/heads/master/docs/grammar.md",
 } as const;
 
 export type HurlDocumentTitle = keyof typeof doc;

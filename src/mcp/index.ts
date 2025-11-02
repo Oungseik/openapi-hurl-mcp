@@ -156,19 +156,23 @@ server.addTool({
 
 server.addTool({
 	name: "openapi_hurl:hurl_document:retrieve",
-	description:
-		"Retrieve the document of hurl. Title of the documents are 'sample', 'hurl_file', 'entry', 'request', 'response', 'capturing_response', 'asserting_response', 'filters', 'grammar'",
+	description: `Retrieve the document of hurl. Title of the documents are 
+  - 'sample' which contains various sample of using hurl
+  - 'entry' the entry definition
+  - 'request' which contains Request describes an HTTP request: a mandatory method and URL, followed by optional headers. Then, options like (retry, delay,  ), query parameters, form parameters, multipart form data, cookies, and basic authentication can be used to configure the HTTP request. Finally, an optional body can be used to configure the HTTP request body
+  - 'response' which is Responses can be used to capture values to perform subsequent requests, or add asserts to HTTP responses. Response on requests are optional, a Hurl file can just consist of a sequence of requests. A response describes the expected HTTP response, with mandatory version and status, followed by optional headers, captures, asserts and body. Assertions in the expected HTTP response describe values of the received HTTP response. Captures capture values from the received HTTP response and populate a set of named variables that can be used in the following entries.
+  - 'capturing_response' which is the ways to capture the responses in details
+  - 'asserting_response' which is the ways to assert the responses in details 
+  - 'filters'`,
 	parameters: z.object({
 		document_title: z
 			.enum([
-				"hurl_file",
 				"entry",
 				"request",
 				"response",
 				"capturing_response",
 				"asserting_response",
 				"filters",
-				"grammar",
 			])
 			.describe("The title of the sections in the HURL documentation."),
 	}),
