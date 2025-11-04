@@ -708,6 +708,15 @@ retry: 3
 retry-interval: 2s
 ```
 
+**With Functions**
+```hurl
+POST {{BASE_URL}}/api/endpoint/{{newUuid}}
+Content-Type: application/json
+{
+    "date": {{newDate}}
+}
+```
+
 **With Assertions**
 ```hurl
 HTTP 200

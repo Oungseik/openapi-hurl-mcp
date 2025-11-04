@@ -26,6 +26,7 @@ You have access to MCP tools for discovery:
 
 ### Step 1: Understand Testing Goals
 Start by asking the user:
+- What are the environment variables
 - What is the main purpose of these tests? (e.g., smoke tests, end-to-end workflows, regression tests)
 - Are there specific user journeys or business flows they want to validate?
 - Are there particular endpoints they're concerned about?\n" +
