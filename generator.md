@@ -130,7 +130,7 @@ retry-interval: 2s
 
 {
     "name": "Test User",
-    "email": "test-{{timestamp}}@example.com",
+    "email": "test-{{newDate}}@example.com",
     "role": "user"
 }
 
@@ -433,9 +433,8 @@ Authorization: Bearer {{access_token}}
 POST {{BASE_URL}}/api/v1/users
 Content-Type: application/json
 {
-    "email": "test-{{timestamp}}@example.com",
-    "username": "user_{{random_uuid}}",
-    "code": "TEST-{{random_int}}"
+    "email": "test-{{newtDate}}@example.com",
+    "username": "user_{{newUuid}}",
 }
 ```
 
@@ -650,7 +649,7 @@ I've inspected the User API endpoints and generated comprehensive test files. He
 1. **Authentication**: Using Bearer token captured from login endpoint
 2. **Retries**: 3 attempts for POST/PUT/DELETE with 2s intervals
 3. **Delays**: 1s after creates, 2s after deletes
-4. **Data**: Using `{{timestamp}}` for unique emails
+4. **Data**: Using `{{newDate}}` for unique emails
 5. **Cleanup**: Each test deletes created resources
 
 ### Schema Validations
