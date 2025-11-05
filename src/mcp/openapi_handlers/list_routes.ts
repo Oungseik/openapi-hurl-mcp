@@ -15,6 +15,8 @@ export const listRoutesHandler = async ({
 		} satisfies TextContent;
 	}
 
+	const servers = api.specification?.servers;
+
 	const paths = api.schema?.paths;
 	if (!paths) {
 		return {
@@ -58,7 +60,7 @@ export const listRoutesHandler = async ({
 	}
 
 	return {
-		text: JSON.stringify(routes, null, 2),
+		text: JSON.stringify({ servers, routes }, null, 2),
 		type: "text",
 	} satisfies TextContent;
 };

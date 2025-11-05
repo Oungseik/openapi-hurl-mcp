@@ -18,7 +18,6 @@
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
             biome
-            opencode
           ];
 
           LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib";
