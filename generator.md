@@ -123,15 +123,16 @@ auth_token: jsonpath "$.token"
 POST {{BASE_URL}}/api/v1/users
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
+
+[Options]
+retry: 3
+retry-interval: 2s
+
 {
     "name": "Test User",
     "email": "test-{{timestamp}}@example.com",
     "role": "user"
 }
-
-[Options]
-retry: 3
-retry-interval: 2s
 
 HTTP 201
 [Asserts]
@@ -167,14 +168,15 @@ jsonpath "$.role" == "user"
 PUT {{BASE_URL}}/api/v1/users/{{user_id}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
-{
-    "name": "Updated Test User",
-    "phone": "+1234567890"
-}
 
 [Options]
 retry: 3
 retry-interval: 2s
+
+{
+    "name": "Updated Test User",
+    "phone": "+1234567890"
+}
 
 HTTP 200
 [Asserts]
@@ -188,9 +190,6 @@ jsonpath "$.updatedAt" exists
 # Step 5: Verify Update Persisted
 GET {{BASE_URL}}/api/v1/users/{{user_id}}
 Authorization: Bearer {{auth_token}}
-
-[Options]
-delay: 1s
 
 HTTP 200
 [Asserts]
